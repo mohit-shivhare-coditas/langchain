@@ -112,13 +112,19 @@ recognition.lang = "en-US";
 recognition.interimResults = false;
 recognition.maxAlternatives = 1;
 
-const diagnostic = document.querySelector(".output");
-const log = document.querySelector(".log");
+// const diagnostic = document.querySelector(".output");
+// const log = document.querySelector(".log");
+const transcriptDiv = document.getElementById('transcript');
 const startButton = document.getElementById("startButton");
+const listenChip = document.getElementById('listening-chip');
+listenChip.style.display = 'none';
 
 let voices = [];
 let speechQueue = [];
 let isSpeaking = false;
+let listening = false;
+var speechStarted = false;
+let finalTranscript = '';
 
 function populateVoiceList() {
     voices = synth.getVoices().sort((a, b) => a.name.localeCompare(b.name));
@@ -165,8 +171,15 @@ startButton.onclick = () => {
 
 function startListening() {
     try {
-        recognition.start();
-        diagnostic.textContent = "Listening...";
+        if (listening) {
+            recognition.stop();
+            listening = false;
+        } else {
+            recognition.start();
+            listening = true;
+        }
+        // recognition.start();
+        // diagnostic.textContent = "Listening...";
         console.log("Ready to receive a speech command.");
     } catch (error) {
         console.log("Error starting recognition: ", error);
@@ -174,22 +187,48 @@ function startListening() {
 }
 
 recognition.onresult = (event) => {
-    const transcript = event.results[0][0].transcript;
-    diagnostic.textContent = `Result received: ${transcript}`;
-    const logEntry = document.createElement("p");
-    logEntry.textContent = transcript;
-    logEntry.classList.add("log-entry");
-    log.appendChild(logEntry);
-    sendTranscript(transcript);
+    // const transcript = event.results[0][0].transcript;
+    // diagnostic.textContent = `Result received: ${transcript}`;
+    // const logEntry = document.createElement("p");
+    // logEntry.textContent = transcript;
+    // logEntry.classList.add("log-entry");
+    // log.appendChild(logEntry);
+    let interimTranscript = '';
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+            finalTranscript += formatTranscript(transcript);
+            startButton.click();
+            sendTranscript(transcript);
+        } else {
+                interimTranscript += transcript;
+        }
+        console.log(event)
+        updateContainerMesages();
+    }
+    const body = document.querySelector('body');
+    transcriptDiv.innerHTML = finalTranscript + `<i style="color:${body.className == 'dark' ? '#efeaea': '#616161'};">` + interimTranscript + '</i>';
 };
 
+recognition.onstart = () => {
+    listenChip.style.display = '';
+    transcriptDiv.textContent = '';
+    finalTranscript = '';
+};
+
+recognition.onspeechstart = (event) => {
+    speechStarted = true;
+    console.log(event)
+}
 recognition.onspeechend = () => {
     recognition.stop();
-    diagnostic.textContent = "Speech recognition has stopped.";
+    speechStarted = false;
+    listenChip.style.display = 'none';
+    // diagnostic.textContent = "Speech recognition has stopped.";
 };
 
 recognition.onerror = (event) => {
-    diagnostic.textContent = `Error occurred in recognition: ${event.error}`;
+    // diagnostic.textContent = `Error occurred in recognition: ${event.error}`;
 };
 
 function sendTranscript(transcript) {
@@ -202,10 +241,10 @@ function sendTranscript(transcript) {
     })
     .then(response => response.json())
     .then(data => {
-        const logEntry = document.createElement("p");
-        logEntry.textContent = `Response: ${data.response}`;
-        logEntry.classList.add("log-entry");
-        log.appendChild(logEntry);
+        // const logEntry = document.createElement("p");
+        // logEntry.textContent = `Response: ${data.response}`;
+        // logEntry.classList.add("log-entry");
+        // log.appendChild(logEntry);
         // speak(data.response);
         const url = '/audio/' + data.file;
         const audio = new Audio(url);
@@ -213,8 +252,59 @@ function sendTranscript(transcript) {
         audio.onended = () => {
             startButton.click();
         };
+        addMessage(resp.history);
+        transcriptDiv.textContent = '';
+        transcriptDiv.style.transform = `translateY(0px)`;
     })
     .catch(error => {
         console.error('Error:', error);
+        addMessage(dummymessages);
+        transcriptDiv.textContent = '';
+        transcriptDiv.style.transform = `translateY(0px)`;
     });
+}
+function formatTranscript(text) {
+    const time = new Date();
+    return text + '\n';
+}
+
+function showMic() {
+    document.getElementById('home-screen').classList.add('hide');
+    document.getElementById('chat-screen').classList.add('show');
+}
+const dummymessages = [
+    [
+        "system",
+        "Sorry! unable to proceed your request now, Please try again."
+    ],
+];
+function addMessage(messages) {
+    const conversation = document.getElementById('conversation');
+    conversation.appendChild(createMessageElement('human', transcriptDiv.textContent));
+    messages.slice(-1).map(([role, text]) => {
+        const newMessage = createMessageElement(role, text);
+        conversation.appendChild(newMessage);
+        updateContainerMesages();
+    });
+}
+
+function createMessageElement(role, text) {
+    const message = document.createElement('div');
+    message.className = `message  ${role === 'human' ? 'secondary-text-color' : 'primary-text-color'}`;
+    message.textContent = text;
+    message.animate([{ opacity: '0' }, { opacity: '1' }], { duration: 600 });
+    return message;
+}
+
+// Check for overflow and adjust visibility to prevent scroll
+function updateContainerMesages() {
+    const chatContainer = document.getElementById('chat-screen__content');
+    const conversationMessages = document.getElementById('conversation').childNodes;
+    if ((chatContainer.scrollHeight > chatContainer.clientHeight) && conversationMessages.length > 1) {
+        for (var i = 0; i < conversationMessages.length - 1; i++) {
+            if ((chatContainer.scrollHeight > chatContainer.clientHeight) && !conversationMessages[i].classList.contains('hidden')) {
+                conversationMessages[i].className = "hidden";
+            }
+        }
+    }
 }

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -15,4 +15,240 @@
     <div class="log"></div>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
+</html> -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Dr. Aryan's Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.js"></script>
+    <style>
+        #transcript {
+            white-space: pre-wrap;
+            /* Preserves spaces and line breaks */
+        }
+    </style>
+</head>
+
+<body class="dark">
+    <div class="w-full h-screen mx-auto">
+        <div class="top-left-effect"></div>
+        <nav class="navbar">
+            <div class="text-center">
+                <span class="nav-title">Dr. Aryan's Assistant</span>
+            </div>
+        </nav>
+
+        <div class="home-screen" id="home-screen">
+            <div class="home-screen__content">
+                <div class="home-screen__title">Hello! Welcome back.</div>
+                <div class="home-screen__subtitle">Tap on the button below to get started</div>
+            </div>
+            <div class="home-screen__footer">
+                <div class="home-screen__footer_box">
+                    <div class="microphone-container" onclick="showMic()">
+                        <div>
+                            <img src="{{ url_for('static', filename='icon/Microphone.svg') }}" alt="Microphone" width="80px" height="80px">
+                        </div>
+                        <div class="microphone-container_taptospeak">Tap to speak</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="chat-screen" id="chat-screen">
+            <div class="chat-screen__content" id="chat-screen__content">
+                <div id="conversation"></div>
+                <div class="message" id="transcript"></div>
+            </div>
+            <div class="chat-screen__footer" id="chat-screen__footer">
+                <main id="waveform"></main>
+                <div class="listening-chip" id="listening-chip">
+                    <span class="dark-ear"><img src="{{ url_for('static', filename='icon/Ear-black.svg') }}" alt="Ear"></span>
+                    <span class="white-ear"><img src="{{ url_for('static', filename='icon/Ear-white.svg') }}" alt="Ear"></span>
+                    <span class="ml-1">LISTENING</span>
+                </div>
+                <a href="javascript:" class="microphone-circle" id="startButton">
+                    <div class="circlebox">
+                        <div>
+                            <img src="{{ url_for('static', filename='icon/Microphone.svg') }}" alt="Microphone" width="80px" height="80px">
+                        </div>
+                    </div>
+                    <main id="microphone-circle"></main>
+                </a>
+            </div>
+        </div>
+        <div class="bottom-right-effect"></div>
+    </div>
+
+
+
+    <script>
+        // const startButton = document.getElementById('startButton');
+        // const listenChip = document.getElementById('listening-chip');
+        // const transcriptDiv = document.getElementById('transcript');
+        // let listening = false;
+
+        // listenChip.style.display = 'none';
+
+        // function toggleConversation() {
+        //     const conversation = document.getElementById('conversation');
+        //     conversation.style.display = conversation.style.display === 'none' ? '' : 'none';
+        // }
+
+        // const sessionId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
+        // const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition)();
+        // recognition.lang = 'en-US';
+        // // recognition.lang = 'hi-IN'; // Set the language to Hindi
+
+        // recognition.continuous = false; // Keep it continuously listening
+        // recognition.interimResults = true; // Get both interim and final results
+
+        // let finalTranscript = '';
+
+        // recognition.onstart = () => {
+        //     // startButton.style.display = 'none';
+        //     listenChip.style.display = '';
+        //     transcriptDiv.textContent = '';
+        //     finalTranscript = '';
+        // };
+
+        // recognition.onresult = (event) => {
+        //     let interimTranscript = '';
+        //     for (let i = event.resultIndex; i < event.results.length; i++) {
+        //         const transcript = event.results[i][0].transcript;
+        //         if (event.results[i].isFinal) {
+        //             finalTranscript += formatTranscript(transcript);
+        //             startButton.click();
+        //             fetch('/chat', {
+        //                 method: 'POST',
+        //                 body: JSON.stringify({ text: transcript, sessionId: sessionId }),
+        //                 headers: { 'Content-Type': 'application/json' }
+        //             })
+        //                 .then(response => response.json())
+        //                 .then(resp => {
+        //                     const url = '/audio/' + resp.file;
+        //                     // const audioUrl = URL.createObjectURL(url);
+        //                     const audio = new Audio(url);
+        //                     audio.play();
+        //                     audio.onended = () => {
+        //                         startButton.click();
+        //                     };
+        //                     // const conversation = document.getElementById('conversation');
+
+
+        //                     // conversation.innerHTML = resp.history.map(([role, text]) => {
+        //                     //     return `<div class="w-1/2 chat-bubble ${role === 'human' ? 'text-left' : 'text-right'}">${text}</div>`;
+        //                     // }).join('');
+        //                     addMessage(resp.history);
+        //                     transcriptDiv.textContent = '';
+        //                     transcriptDiv.style.transform = `translateY(0px)`;
+        //                 })
+        //                 .catch(() => {
+        //                     addMessage(dummymessages);
+        //                     transcriptDiv.textContent = '';
+        //                     transcriptDiv.style.transform = `translateY(0px)`;
+        //                 });
+
+        //         } else {
+        //             interimTranscript += transcript;
+        //         }
+        //         console.log(event)
+        //         updateContainerMesages();
+        //     }
+        //     transcriptDiv.innerHTML = finalTranscript + '<i style="color:#616161;">' + interimTranscript + '</i>';
+        // };
+
+        // recognition.onend = () => {
+        //     // startButton.style.display = '';
+        //     listenChip.style.display = 'none';
+        // };
+
+        // var speechStarted = false;
+        // recognition.onspeechstart = (event) => {
+        //     speechStarted = true;
+        //     console.log(event)
+        // }
+        // recognition.onspeechend = (event) => {
+        //     speechStarted = false;
+        //     console.log(event)
+        // }
+
+        // startButton.addEventListener('click', () => {
+        //     if (listening) {
+        //         recognition.stop();
+        //         listening = false;
+        //     } else {
+        //         recognition.start();
+        //         listening = true;
+        //     }
+        // });
+
+        // function formatTranscript(text) {
+        //     const time = new Date();
+        //     return text + '\n';
+        // }
+
+
+
+        // function showMic() {
+        //     document.getElementById('home-screen').classList.add('hide');
+        //     document.getElementById('chat-screen').classList.add('show');
+        // }
+        // const dummymessages = [
+        //     [
+        //         "system",
+        //         "Sorry! unable to proceed your request now, Please try again."
+        //     ],
+        // ];
+        // function addMessage(messages) {
+        //     const conversation = document.getElementById('conversation');
+        //     conversation.appendChild(createMessageElement('human', transcriptDiv.textContent));
+        //     messages.slice(-1).map(([role, text]) => {
+        //         const newMessage = createMessageElement(role, text);
+        //         conversation.appendChild(newMessage);
+        //         updateContainerMesages();
+        //         // const conversationMessages = Array.from(conversation.children)
+        //         // const messageHeight = newMessage.clientHeight;
+        //         // // Trigger animation
+        //         // console.log(messageHeight)
+        //         // requestAnimationFrame(() => {
+        //         //     conversationMessages.forEach((message) => {
+        //         //         if (!message.classList.contains('hidden')) {
+        //         //             message.style.transform = `translateY(-${messageHeight}px)`;
+        //         //         }
+        //         //     });
+        //         //     newMessage.style.transform = 'translateY(0)';
+        //         // });
+        //     });
+        // }
+
+        // function createMessageElement(role, text) {
+        //     const message = document.createElement('div');
+        //     message.className = `message  ${role === 'human' ? 'secondary-text-color' : 'primary-text-color'}`;
+        //     message.textContent = text || 'dummy';
+        //     message.animate([{ opacity: '0' }, { opacity: '1' }], { duration: 600 });
+        //     return message;
+        // }
+
+        // // Check for overflow and adjust visibility to prevent scroll
+        // function updateContainerMesages() {
+        //     const chatContainer = document.getElementById('chat-screen__content');
+        //     const conversationMessages = document.getElementById('conversation').childNodes;
+        //     if ((chatContainer.scrollHeight > chatContainer.clientHeight) && conversationMessages.length > 1) {
+        //         for (var i = 0; i < conversationMessages.length - 1; i++) {
+        //             if ((chatContainer.scrollHeight > chatContainer.clientHeight) && !conversationMessages[i].classList.contains('hidden')) {
+        //                 conversationMessages[i].className = "hidden";
+        //             }
+        //         }
+        //     }
+        // }
+    </script>
+    <script src="{{ url_for('static', filename='js/sketch.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/circle-sketch.js') }}"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
 </html>

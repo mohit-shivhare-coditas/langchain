@@ -1,0 +1,128 @@
+:root {
+  /* Font Sizes */
+  --font-size-xxsmall: 12px;
+  --font-size-xsmall: 16px;
+  --font-size-small: 20px;
+  --font-size-medium: 24px;
+  --font-size-large: 32px;
+  --font-size-xlarge: 48px;
+  --font-size-xxlarge: 64px;
+
+  /* Spacing */
+  --spacing-small: 0.5rem;
+  --spacing-medium: 1rem;
+  --spacing-large: 1.5rem;
+  --spacing-xlarge: 2rem;
+
+  /* Border Radius */
+  --border-radius: 0.25rem;
+
+  /* Box Shadow */
+  --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  /* Layout sizes  */
+  --nav-height: 99px;
+  --chat-footer-height: 300px;
+}
+:root .dark {
+  /* Colors  */
+  --background-color: #0f1115;
+  --primary-color: #FF84DD;
+  --secondary-color: #90A2FF;
+  --yellow-color: #FFC700;
+  --text-color: #FF84DD;
+  --text-secondary-color: #ffffff;
+  --muted-text-color: #dfdfdf;
+  --title-text-color: #ffffff;
+  --white-color: #ffffff;
+  --footer-box-bg-color: rgba(255, 255, 255, 0.1);
+  --black-color: #000000;
+  --listen-chip-text-color: #ffffff;
+  --linear-primary-color: linear-gradient(90.9deg, var(--secondary-color) 0.04%, var(--primary-color) 97.5%);
+  --linear-muted-color: linear-gradient(92.17deg, rgba(255, 255, 255, 0.44) 48.49%, rgba(153, 153, 153, 0.44) 94.56%);
+  --linear-mincrophone-bg-color: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(39, 41, 44, 0.04) 100%);
+  --listen-chip-bg-color: linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2));
+  --linear-circlebox-color: linear-gradient(180deg, rgba(255, 255, 255, 0.1512) 0%, rgba(15, 17, 21, 0.24) 100%);
+  --taptospeak-color: rgba(255, 255, 255, 0.4);
+}
+
+:root .light {
+  /* Colors  */
+  --background-color: #ffffff;
+  --primary-color: #FF84DD;
+  --secondary-color: #90A2FF;
+  --yellow-color: #FFC700;
+  --text-color: #001AFF;
+  --text-secondary-color: linear-gradient(92.17deg, #0F1115 48.49%, #555555 94.56%);
+  --muted-text-color: #DFDFDF;
+  --title-text-color: linear-gradient(92.17deg, #0F1115 48.49%, #555555 94.56%);
+  --white-color: #ffffff;
+  --footer-box-bg-color: #EEEEEE;
+  --black-color: #000000;
+  --listen-chip-text-color: #101216;
+  --linear-primary-color: linear-gradient(90.9deg, var(--secondary-color) 0.04%, var(--primary-color) 97.5%);
+  --linear-muted-color: linear-gradient(92.17deg, #0F1115 48.49%, #555555 94.56%);
+  --linear-mincrophone-bg-color: linear-gradient(180deg, var(--muted-text-color) 0%, #EEEEEE 100%);
+  --listen-chip-bg-color: #E4E4E4;
+  --linear-circlebox-color: linear-gradient(180deg, rgba(255, 255, 255, 0.1512) 0%, rgba(15, 17, 21, 0.24) 100%);
+  --taptospeak-color: linear-gradient(92.17deg, #0F1115 48.49%, #555555 94.56%);
+}
+
+@media (max-width: 768px) {
+  :root {
+    /* font sizes  */
+    /* Font Sizes */
+    --font-size-xxsmall: 8px;
+    --font-size-xsmall: 12px;
+    --font-size-small: 16px;
+    --font-size-medium: 20px;
+    --font-size-large: 24px;
+    --font-size-xlarge: 36px;
+    --font-size-xxlarge: 48px;
+
+    /* Layout sizes  */
+    --nav-height: 66px;
+    --chat-footer-height: 250px;
+  }
+}
+
+
+
+/* Animations  */
+@keyframes appearAndMoveUp {
+  0% {
+      top: 0;
+  }
+  100% {
+      top: -10%;
+      transform: translateY(-10%);
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+      opacity: 0;
+  }
+  100% {
+      opacity: 1;
+  }
+}
+
+@keyframes GrowUp {
+  0% {
+      height: 0;
+  }
+  100% {
+      height: 448px;
+  }
+}
+@keyframes CurveAnimation {
+  0% {
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+  }   
+  100% {
+      border-top-left-radius: 50%;
+      border-top-right-radius: 50%;
+  }
+}
