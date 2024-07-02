@@ -117,6 +117,8 @@ recognition.maxAlternatives = 1;
 const transcriptDiv = document.getElementById('transcript');
 const startButton = document.getElementById("startButton");
 const listenChip = document.getElementById('listening-chip');
+const body = document.querySelector('body');
+
 listenChip.style.display = 'none';
 
 let voices = [];
@@ -203,11 +205,9 @@ recognition.onresult = (event) => {
         } else {
                 interimTranscript += transcript;
         }
-        console.log(event)
         updateContainerMesages();
     }
-    const body = document.querySelector('body');
-    transcriptDiv.innerHTML = finalTranscript + `<i style="color:${body.className == 'dark' ? '#efeaea': '#616161'};">` + interimTranscript + '</i>';
+    transcriptDiv.innerHTML = `<i style="color:${body.className == 'dark' ? '#efeaea': '#616161'};">` + finalTranscript + interimTranscript + '</i>';
 };
 
 recognition.onstart = () => {
@@ -252,7 +252,7 @@ function sendTranscript(transcript) {
         audio.onended = () => {
             startButton.click();
         };
-        addMessage(resp.history);
+        addMessage([ [ "system", data.response] ]);
         transcriptDiv.textContent = '';
         transcriptDiv.style.transform = `translateY(0px)`;
     })
